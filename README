@@ -1,1 +1,3 @@
 # Spelling be tool
+Tools to generate lists of words used in the NYT spelling bee puzzle.
+Written in common lisp
