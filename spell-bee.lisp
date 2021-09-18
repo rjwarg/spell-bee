@@ -9,6 +9,25 @@
 (defvar *all-seven* nil)
 (defvar *testword* nil)
 
+;;
+;; list word file testtext.txt with ZZZ at end
+;;
+
+(defun list-words-v2 ()
+  (with-open-file (stream "texttest.txt")
+  (loop for line = (read-line stream nil 'foo)
+	until (eq line 'foo)
+	do
+	   (setq *testword* (string-downcase line));
+	 (if
+	      (and
+               (> (length *testword*) 3)
+	       (find *must-letter* *testword*)
+	       (string= "" (string-trim *all-seven* *testword*)))
+            (format t "~a  >" *testword*)))
+       ))
+
+
 
 ;; open the dictionary file
 (defun read-test () (open "test.txt"))
@@ -45,7 +64,6 @@
 	      (and
 	       (find *must-letter* *testword*)
 	       (string= "" (string-trim *all-seven* *testword*))) (format t "~a  " *testword*)))
-    (close in)
-    (return-from nil nil)       ))
+    (close in)))
 
 
