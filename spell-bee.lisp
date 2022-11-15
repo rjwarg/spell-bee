@@ -8,25 +8,61 @@
 (defvar *must-letter* nil)
 (defvar *all-seven* nil)
 (defvar *testword* nil)
+(defvar *file-name* "words.txt")
 
 ;;
 ;; list word file testtext.txt with ZZZ at end
 ;;
 
-(defun list-words-v2 ()
-  (with-open-file (stream "texttest.txt")
-  (loop for line = (read-line stream nil 'foo)
+(defun list-words-v2 (&optional filename)
+  (if filename () (setq filename "MIT-words.txt"))
+  (with-open-file (stream filename)
+    (format t "Searching ~a ~%" filename) 
+    (loop for line = (read-line stream nil 'foo)
 	until (eq line 'foo)
 	do
 	   (setq *testword* (string-downcase line));
 	 (if
 	      (and
                (> (length *testword*) 3)
-	       (find *must-letter* *testword*)
+	       (find (char *must-letter* 0) *testword*)
 	       (string= "" (string-trim *all-seven* *testword*)))
-            (format t "~a  >" *testword*)))
+            (format t "<~a> " *testword*)))
+    ))
+
+
+;;
+;; list word file testtext.txt with ZZZ at end
+;;
+
+(defun list-pangram (&optional filename)
+  (if filename () (setq filename "words.txt"))
+  (with-open-file (stream filename)
+    (format t "Searching ~a ~%" filename) 
+    (loop for line = (read-line stream nil 'foo)
+	until (eq line 'foo)
+	do
+	   (setq *testword* (string-downcase line));
+	 (if
+	      (and
+               (> (length *testword*) 6)
+	       (find (char *must-letter* 0) *testword*)
+	       (string= "" (string-trim *all-seven* *testword*)))
+            (format t "<~a> " *testword*)))
        ))
 
+;;
+;; prompt for test values
+;;
+(defun prompt-read (prompt)
+	   (format *query-io* "~a :" prompt)
+	   (force-output *query-io*)
+	   (read-line *query-io*))
+
+(defun get-letters ()
+	   (setq *must-letter* (prompt-read "Center Letter"))
+	   (setq *all-seven* (prompt-read "Outer Six Letters"))
+  (setq *all-seven* (string-downcase (concatenate 'string *must-letter* *all-seven*))))
 
 
 ;; open the dictionary file
@@ -34,8 +70,8 @@
 
 
 ;; read and print the first word in the dictionary
-(defun list-words-old ()
-  (let ((in (open "test.txt")))
+(defun list-words-old (test-file)
+  (let ((in (open test-file)))
     (loop repeat 10
 	  do (format t "~a~%" (read-line in)))
     (close in)))
@@ -65,5 +101,19 @@
 	       (find *must-letter* *testword*)
 	       (string= "" (string-trim *all-seven* *testword*))) (format t "~a  " *testword*)))
     (close in)))
+
+;;
+;; complete list
+;;
+(defun main ()
+  (get-letters)
+  (list-words-v2 "MIT-words.txt")
+  (terpri)
+  (list-words-v2 "words.txt"))
+
+;;; run the program
+(main)
+
+
 
 
